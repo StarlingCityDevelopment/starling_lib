@@ -55,6 +55,21 @@ const AlertDialog: React.FC = () => {
         exitTransitionDuration={150}
         transition="fade"
         title={<ReactMarkdown components={MarkdownComponents}>{dialogData.header}</ReactMarkdown>}
+        styles={{
+          modal: {
+            textAlign: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+          },
+          title: {
+            color: "white",
+            textAlign: 'center',
+            width: '100%',
+            fontSize: 18,
+          },
+          body: {
+            color: "white",
+          },
+        }}
       >
         <Stack className={classes.contentStack}>
           <ReactMarkdown
@@ -66,16 +81,16 @@ const AlertDialog: React.FC = () => {
           >
             {dialogData.content}
           </ReactMarkdown>
-          <Group position="right" spacing={10}>
+          <Group position="center" spacing={10}>
             {dialogData.cancel && (
-              <Button uppercase variant="default" onClick={() => closeAlert('cancel')} mr={3}>
+              <Button uppercase variant="light" color="red" onClick={() => closeAlert('cancel')} mr={3}>
                 {dialogData.labels?.cancel || locale.ui.cancel}
               </Button>
             )}
             <Button
               uppercase
-              variant={dialogData.cancel ? 'light' : 'default'}
-              color={dialogData.cancel ? theme.primaryColor : undefined}
+              color="green"
+              variant="light"
               onClick={() => closeAlert('confirm')}
             >
               {dialogData.labels?.confirm || locale.ui.confirm}

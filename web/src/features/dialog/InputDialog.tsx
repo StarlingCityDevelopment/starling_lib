@@ -100,17 +100,8 @@ const InputDialog: React.FC = () => {
         centered
         closeOnEscape={fields.options?.allowCancel !== false}
         closeOnClickOutside={false}
-        size="xs"
-        styles={{
-          modal: {
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-          },
-          title: {
-            textAlign: 'center',
-            width: '100%',
-            fontSize: 18
-          },
-        }}
+        size={fields.options?.size || 'xs'}
+        styles={{ title: { textAlign: 'center', width: '100%', fontSize: 18 } }}
         title={fields.heading}
         withCloseButton={false}
         overlayOpacity={0.5}

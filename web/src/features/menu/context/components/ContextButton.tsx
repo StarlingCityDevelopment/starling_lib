@@ -15,66 +15,98 @@ const clickContext = (id: string) => {
   fetchNui('clickContext', id);
 };
 
-const useStyles = createStyles((theme, params: { disabled?: boolean; readOnly?: boolean }) => ({
-  inner: {
-    justifyContent: 'flex-start',
-  },
-  label: {
-    width: '100%',
-    color: params.disabled ? theme.colors.dark[3] : theme.colors.dark[0],
-    whiteSpace: 'pre-wrap',
-  },
-  button: {
-    height: 'fit-content',
-    width: '100%',
-    padding: 10,
-    '&:hover': {
-      backgroundColor: params.readOnly ? theme.colors.dark[6] : undefined,
-      cursor: params.readOnly ? 'unset' : 'pointer',
+const useStyles = createStyles((_, params: { disabled?: boolean; readOnly?: boolean }) => {
+  const disabledColor = 'rgba(128,128,128,1)';
+  const textColor = params.disabled ? disabledColor : '#FFFFFF';
+  const bg = params.disabled ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.65)';
+  const hoverBg = params.readOnly || params.disabled ? (params.readOnly ? 'rgba(28,28,28,1)' : undefined) : 'rgba(48,48,48,0.65)';
+  const hoverCursor = params.readOnly ? 'default' : params.disabled ? 'not-allowed' : 'pointer';
+  const hoverBorder = params.readOnly || params.disabled ? 'none' : '1px solid red';
+
+  return {
+    inner: {
+      justifyContent: 'flex-start',
+      gap: 8,
     },
-    '&:active': {
-      transform: params.readOnly ? 'unset' : undefined,
+    label: {
+      width: '100%',
+      color: textColor,
+      whiteSpace: 'pre-wrap',
+      textAlign: 'left',
     },
-  },
-  iconImage: {
-    maxWidth: '25px',
-  },
-  description: {
-    color: params.disabled ? theme.colors.dark[3] : theme.colors.dark[2],
-    fontSize: 12,
-  },
-  dropdown: {
-    padding: 10,
-    color: theme.colors.dark[0],
-    fontSize: 14,
-    maxWidth: 256,
-    width: 'fit-content',
-    border: 'none',
-  },
-  buttonStack: {
-    gap: 4,
-    flex: '1',
-  },
-  buttonGroup: {
-    gap: 4,
-    flexWrap: 'nowrap',
-  },
-  buttonIconContainer: {
-    width: 25,
-    height: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonTitleText: {
-    overflowWrap: 'break-word',
-  },
-  buttonArrowContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 25,
-    height: 25,
-  },
-}));
+    button: {
+      color: textColor,
+      minHeight: 52,
+      height: 'fit-content',
+      width: '100%',
+      padding: 10,
+      backgroundColor: bg,
+      borderRadius: 8,
+      border: '1px solid transparent',
+      transition: 'background-color 150ms, transform 80ms, box-shadow 150ms, border-color 150ms',
+      '&:hover': {
+        backgroundColor: hoverBg,
+        cursor: hoverCursor,
+        border: hoverBorder,
+      },
+      '&:active': {
+        transform: params.readOnly || params.disabled ? 'none' : 'translateY(1px)',
+      },
+      '&:disabled': {
+        backgroundColor: 'rgba(0, 0, 0, 0.25)',
+        cursor: 'not-allowed',
+        opacity: 0.9,
+      },
+    },
+    iconImage: {
+      maxWidth: 24,
+      maxHeight: 24,
+      objectFit: 'contain',
+      borderRadius: 4,
+    },
+    description: {
+      color: textColor,
+      fontSize: 12,
+      opacity: params.disabled ? 0.8 : 0.95,
+    },
+    dropdown: {
+      padding: 10,
+      color: '#FFFFFF',
+      fontSize: 14,
+      maxWidth: 320,
+      minWidth: 220,
+      width: 'fit-content',
+      border: 'none',
+      backgroundColor: 'rgba(0,0,0,0.75)',
+      borderRadius: 8,
+    },
+    buttonStack: {
+      gap: 6,
+      flex: '1',
+    },
+    buttonGroup: {
+      gap: 8,
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+    },
+    buttonIconContainer: {
+      width: 28,
+      height: 28,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    buttonTitleText: {
+      overflowWrap: 'break-word',
+      fontWeight: 500,
+    },
+    buttonArrowContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 28,
+      height: 28,
+    },
+  };
+});
 
 const ContextButton: React.FC<{
   option: [string, Option];
@@ -94,11 +126,7 @@ const ContextButton: React.FC<{
           <Button
             classNames={{ inner: classes.inner, label: classes.label, root: classes.button }}
             onClick={() =>
-              !button.disabled && !button.readOnly
-                ? button.menu
-                  ? openMenu(button.menu)
-                  : clickContext(buttonKey)
-                : null
+              !button.disabled && !button.readOnly ? button.menu ? openMenu(button.menu) : clickContext(buttonKey) : null
             }
             variant="default"
             disabled={button.disabled}

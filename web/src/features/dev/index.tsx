@@ -13,6 +13,7 @@ import LibIcon from '../../components/LibIcon';
 
 const Dev: React.FC = () => {
   const [opened, setOpened] = useState(false);
+  const [theme, setTheme] = useState('light');
 
   return (
     <>
@@ -68,6 +69,14 @@ const Dev: React.FC = () => {
           <Divider />
           <Button fullWidth onClick={() => debugSkillCheck()}>
             Run skill check
+          </Button>
+          <Divider />
+          <Button fullWidth onClick={() => {
+            const root = document.getElementById('root');
+            setTheme(theme === 'light' ? 'dark' : 'light');
+            root!.style.backgroundImage = `url("${theme === 'light' ? 'https://i.imgur.com/3pzRj9n.png' : 'https://i.imgur.com/iPTAdYV.png'}")`;
+          }}>
+            Change theme
           </Button>
         </Stack>
       </Drawer>

@@ -35,6 +35,21 @@ const SliderField: React.FC<Props> = (props) => {
           { value: props.row.min || 0, label: props.row.min || 0 },
           { value: props.row.max || 100, label: props.row.max || 100 },
         ]}
+        styles={{
+          label: {
+            color: 'white',
+          },
+          markLabel: {
+            color: 'white',
+          },
+          track: {
+            color: 'white',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            '::before': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            }
+          }
+        }}
       />
     </Box>
   );

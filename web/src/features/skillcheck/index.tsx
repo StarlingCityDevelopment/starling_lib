@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { useNuiEvent } from '../../hooks/useNuiEvent';
 import Indicator from './indicator';
 import { fetchNui } from '../../utils/fetchNui';
@@ -15,73 +15,56 @@ const difficultyOffsets = {
   hard: 25,
 };
 
-const useStyles = createStyles((theme, params: { difficultyOffset: number }) => ({
+const useStyles = createStyles((theme) => ({
   svg: {
+    color: 'white',
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    r: 50,
     width: 500,
     height: 500,
   },
   track: {
+    color: 'white',
     fill: 'transparent',
-    stroke: theme.colors.dark[5],
+    stroke: 'rgba(0, 0, 0, 0.65)',
     strokeWidth: 8,
-    r: 50,
-    cx: 250,
-    cy: 250,
-    strokeDasharray: circleCircumference,
     '@media (min-height: 1440px)': {
       strokeWidth: 10,
-      r: 65,
-      strokeDasharray: 2 * 65 * Math.PI,
     },
   },
   skillArea: {
+    color: 'white',
     fill: 'transparent',
     stroke: theme.fn.primaryColor(),
     strokeWidth: 8,
-    r: 50,
-    cx: 250,
-    cy: 250,
-    strokeDasharray: circleCircumference,
-    strokeDashoffset: circleCircumference - (Math.PI * 50 * params.difficultyOffset) / 180,
+    strokeLinecap: 'round',
     '@media (min-height: 1440px)': {
       strokeWidth: 10,
-      r: 65,
-      strokeDasharray: 2 * 65 * Math.PI,
-      strokeDashoffset: 2 * 65 * Math.PI - (Math.PI * 65 * params.difficultyOffset) / 180,
     },
   },
   indicator: {
+    color: 'white',
     stroke: 'red',
     strokeWidth: 16,
     fill: 'transparent',
-    r: 50,
-    cx: 250,
-    cy: 250,
-    strokeDasharray: circleCircumference,
-    strokeDashoffset: circleCircumference - 3,
     '@media (min-height: 1440px)': {
       strokeWidth: 18,
-      r: 65,
-      strokeDasharray: 2 * 65 * Math.PI,
-      strokeDashoffset: 2 * 65 * Math.PI - 5,
     },
   },
   button: {
+    color: 'white',
     position: 'absolute',
     left: '50%',
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: theme.colors.dark[5],
-    width: 25,
-    height: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    width: 32,
+    height: 32,
     textAlign: 'center',
     borderRadius: 5,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 500,
     display: 'flex',
     justifyContent: 'center',
@@ -104,7 +87,7 @@ const SkillCheck: React.FC = () => {
     difficulty: 'easy',
     key: 'e',
   });
-  const { classes } = useStyles({ difficultyOffset: skillCheck.difficultyOffset });
+  const { classes } = useStyles();
 
   useNuiEvent('startSkillCheck', (data: { difficulty: GameDifficulty | GameDifficulty[]; inputs?: string[] }) => {
     dataRef.current = data;
@@ -128,7 +111,7 @@ const SkillCheck: React.FC = () => {
     fetchNui('skillCheckOver', false);
   });
 
-  const handleComplete = (success: boolean) => {
+  const handleComplete = useCallback((success: boolean) => {
     if (!dataRef.current) return;
     if (!success || !Array.isArray(dataRef.current.difficulty)) {
       setVisible(false);
@@ -153,17 +136,23 @@ const SkillCheck: React.FC = () => {
       difficulty: data,
       key: key.toLowerCase(),
     }));
-  };
+  }, []);
 
   return (
     <>
       {visible && (
         <>
-          <svg className={classes.svg}>
-            {/*Circle track*/}
-            <circle className={classes.track} />
-            {/*SkillCheck area*/}
-            <circle transform={`rotate(${skillCheck.angle}, 250, 250)`} className={classes.skillArea} />
+          <svg className={classes.svg} viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+            <circle className={classes.track} cx={250} cy={250} r={50} strokeDasharray={circleCircumference} />
+            <circle
+              transform={`rotate(${skillCheck.angle}, 250, 250)`}
+              className={classes.skillArea}
+              cx={250}
+              cy={250}
+              r={50}
+              strokeDasharray={circleCircumference}
+              strokeDashoffset={circleCircumference - (Math.PI * 50 * skillCheck.difficultyOffset) / 180}
+            />
             <Indicator
               angle={skillCheck.angle}
               offset={skillCheck.difficultyOffset}
@@ -171,10 +160,10 @@ const SkillCheck: React.FC = () => {
                 skillCheck.difficulty === 'easy'
                   ? 1
                   : skillCheck.difficulty === 'medium'
-                  ? 1.5
-                  : skillCheck.difficulty === 'hard'
-                  ? 1.75
-                  : skillCheck.difficulty.speedMultiplier
+                    ? 1.5
+                    : skillCheck.difficulty === 'hard'
+                      ? 1.75
+                      : skillCheck.difficulty.speedMultiplier
               }
               handleComplete={handleComplete}
               className={classes.indicator}

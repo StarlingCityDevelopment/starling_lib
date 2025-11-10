@@ -10,9 +10,9 @@ interface Props {
   index: number;
 }
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
   eyeIcon: {
-    color: theme.colors.dark[2],
+    color: 'white',
   },
 }));
 
@@ -33,6 +33,18 @@ const InputField: React.FC<Props> = (props) => {
           maxLength={props.row.max}
           disabled={props.row.disabled}
           withAsterisk={props.row.required}
+          styles={{
+            icon: {
+              color: 'white',
+            },
+            label: {
+              color: 'white',
+            },
+            input: {
+              color: 'white',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            }
+          }}
         />
       ) : (
         <PasswordInput
@@ -46,6 +58,21 @@ const InputField: React.FC<Props> = (props) => {
           maxLength={props.row.max}
           disabled={props.row.disabled}
           withAsterisk={props.row.required}
+          styles={{
+            icon: {
+              color: 'white',
+            },
+            innerInput: {
+              color: 'white',
+            },
+            label: {
+              color: 'white',
+            },
+            input: {
+              color: 'white',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            }
+          }}
           visibilityToggleIcon={({ reveal, size }) => (
             <LibIcon
               icon={reveal ? 'eye-slash' : 'eye'}

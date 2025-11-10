@@ -1,4 +1,4 @@
-import { Button, createStyles, Group, Modal, Stack, useMantineTheme } from '@mantine/core';
+import { Button, createStyles, Group, Modal, Stack } from '@mantine/core';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useNuiEvent } from '../../hooks/useNuiEvent';
@@ -8,16 +8,28 @@ import remarkGfm from 'remark-gfm';
 import type { AlertProps } from '../../typings';
 import MarkdownComponents from '../../config/MarkdownComponents';
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
+  title: {
+    color: 'white',
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    border: 'none',
+    boxShadow: 'none',
+  },
   contentStack: {
-    color: theme.colors.dark[2],
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 24,
+    color: 'white',
+    border: 'none',
+    boxShadow: 'none',
   },
 }));
 
 const AlertDialog: React.FC = () => {
   const { locale } = useLocales();
   const { classes } = useStyles();
-  const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const [dialogData, setDialogData] = useState<AlertProps>({
     header: '',
@@ -54,11 +66,21 @@ const AlertDialog: React.FC = () => {
         overlayOpacity={0.5}
         exitTransitionDuration={150}
         transition="fade"
-        title={<ReactMarkdown components={MarkdownComponents}>{dialogData.header}</ReactMarkdown>}
+        title={<ReactMarkdown className={classes.title} components={MarkdownComponents}>{dialogData.header}</ReactMarkdown>}
         styles={{
+          inner: {
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.25)',
+            backdropFilter: 'blur(2px)',
+            border: 'none',
+            boxShadow: 'none',
+          },
           modal: {
             textAlign: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundColor: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
           },
           title: {
             color: "white",
@@ -81,7 +103,7 @@ const AlertDialog: React.FC = () => {
           >
             {dialogData.content}
           </ReactMarkdown>
-          <Group position="center" spacing={10}>
+          <Group position="center" spacing={24}>
             {dialogData.cancel && (
               <Button uppercase variant="light" color="red" onClick={() => closeAlert('cancel')} mr={3}>
                 {dialogData.labels?.cancel || locale.ui.cancel}

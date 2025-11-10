@@ -1,59 +1,81 @@
-import { Box, createStyles, Stack, Tooltip } from '@mantine/core';
+import { Box, createStyles, Divider, Stack, Tooltip } from '@mantine/core';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNuiEvent } from '../../../hooks/useNuiEvent';
 import ListItem from './ListItem';
 import Header from './Header';
 import FocusTrap from 'focus-trap-react';
 import { fetchNui } from '../../../utils/fetchNui';
-import type { MenuPosition, MenuSettings } from '../../../typings';
+import type { MenuSettings } from '../../../typings';
 import LibIcon from '../../../components/LibIcon';
 
-const useStyles = createStyles((theme, params: { position?: MenuPosition; itemCount: number; selected: number }) => ({
-  tooltip: {
-    backgroundColor: theme.colors.dark[6],
-    color: theme.colors.dark[2],
-    borderRadius: theme.radius.sm,
-    maxWidth: 350,
-    whiteSpace: 'normal',
-  },
-  container: {
-    position: 'absolute',
-    pointerEvents: 'none',
-    marginTop: params.position === 'top-left' || params.position === 'top-right' ? 5 : 0,
-    marginLeft: params.position === 'top-left' || params.position === 'bottom-left' ? 5 : 0,
-    marginRight: params.position === 'top-right' || params.position === 'bottom-right' ? 5 : 0,
-    marginBottom: params.position === 'bottom-left' || params.position === 'bottom-right' ? 5 : 0,
-    right: params.position === 'top-right' || params.position === 'bottom-right' ? 1 : undefined,
-    left: params.position === 'bottom-left' ? 1 : undefined,
-    bottom: params.position === 'bottom-left' || params.position === 'bottom-right' ? 1 : undefined,
-    fontFamily: 'Roboto',
-    width: 384,
-  },
-  buttonsWrapper: {
-    height: 'fit-content',
-    maxHeight: 415,
-    overflow: 'hidden',
-    borderRadius: params.itemCount <= 6 || params.selected === params.itemCount - 1 ? theme.radius.md : undefined,
-    backgroundColor: theme.colors.dark[8],
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-  },
-  scrollArrow: {
-    backgroundColor: theme.colors.dark[8],
-    textAlign: 'center',
-    borderBottomLeftRadius: theme.radius.md,
-    borderBottomRightRadius: theme.radius.md,
-    height: 25,
-  },
-  scrollArrowIcon: {
-    color: theme.colors.dark[2],
-    fontSize: 20,
-  },
-}));
+const useStyles = createStyles((theme, params: { itemCount: number; selected: number }) => {
+  const radiusSm = 6;
+  const radiusMd = 10;
+
+  return {
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.65)',
+      color: '#ffffff',
+      borderRadius: radiusSm,
+      maxWidth: 360,
+      padding: 10,
+      boxShadow: `0 8px 30px ${theme.fn.rgba('#000', 0.6)}`,
+      whiteSpace: 'normal',
+    },
+    container: {
+      position: 'absolute',
+      pointerEvents: 'none',
+      top: '2%',
+      right: '3%',
+      width: 384,
+      zIndex: 9999,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+    },
+    buttonsWrapper: {
+      height: 'fit-content',
+      maxHeight: 415,
+      overflow: 'hidden',
+      borderRadius:
+        params.itemCount <= 6 || params.selected === params.itemCount - 1 ? radiusMd : undefined,
+  backgroundColor: 'rgba(0, 0, 0, 0.65)',
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 0,
+      padding: 8,
+  boxShadow: `inset 0 1px 0 ${theme.fn.rgba('#fff', 0.02)}, 0 8px 28px ${theme.fn.rgba('#000', 0.45)}`,
+      transition: 'border-radius 150ms ease, max-height 200ms ease, transform 120ms ease',
+      // custom scrollbar inside the menu
+      '& > *': {
+        scrollbarWidth: 'thin',
+        scrollbarColor: `${theme.fn.rgba('#fff', 0.12)} transparent`,
+      },
+      '& [role="list"]': {
+        // no-op: keep semantics
+      },
+    },
+    scrollArrow: {
+      backgroundColor: 'rgba(0, 0, 0, 0.65)',
+      textAlign: 'center',
+      borderBottomLeftRadius: radiusMd,
+      borderBottomRightRadius: radiusMd,
+      height: 28,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxShadow: `0 -6px 18px ${theme.fn.rgba('#000', 0.36)}`,
+    },
+    scrollArrowIcon: {
+      color: theme.white,
+      fontSize: 18,
+      opacity: 0.96,
+    },
+  };
+});
 
 const ListMenu: React.FC = () => {
   const [menu, setMenu] = useState<MenuSettings>({
-    position: 'top-left',
+    position: 'top-right',
     title: '',
     items: [],
   });
@@ -63,7 +85,7 @@ const ListMenu: React.FC = () => {
   const [checkedStates, setCheckedStates] = useState<Record<number, boolean>>({});
   const listRefs = useRef<Array<HTMLDivElement | null>>([]);
   const firstRenderRef = useRef(false);
-  const { classes } = useStyles({ position: menu.position, itemCount: menu.items.length, selected });
+  const { classes } = useStyles({ itemCount: menu.items.length, selected });
 
   const closeMenu = (ignoreFetch?: boolean, keyPressed?: string, forceClose?: boolean) => {
     if (menu.canClose === false && !forceClose) return;
@@ -86,20 +108,24 @@ const ListMenu: React.FC = () => {
           return selected - 1;
         });
         break;
-      case 'ArrowRight':
+        case 'ArrowRight':
         if (Array.isArray(menu.items[selected].values))
           setIndexStates({
             ...indexStates,
             [selected]:
-              indexStates[selected] + 1 <= menu.items[selected].values?.length! - 1 ? indexStates[selected] + 1 : 0,
+              indexStates[selected] + 1 <= ((menu.items[selected].values?.length ?? 1) - 1)
+                ? indexStates[selected] + 1
+                : 0,
           });
         break;
-      case 'ArrowLeft':
+        case 'ArrowLeft':
         if (Array.isArray(menu.items[selected].values))
           setIndexStates({
             ...indexStates,
             [selected]:
-              indexStates[selected] - 1 >= 0 ? indexStates[selected] - 1 : menu.items[selected].values?.length! - 1,
+              indexStates[selected] - 1 >= 0
+                ? indexStates[selected] - 1
+                : ((menu.items[selected].values?.length ?? 1) - 1),
           });
 
         break;
@@ -140,15 +166,14 @@ const ListMenu: React.FC = () => {
       inline: 'start',
     });
     listRefs.current[selected]?.focus({ preventScroll: true });
-    // debounces the callback to avoid spam
     const timer = setTimeout(() => {
       fetchNui('changeSelected', [
         selected,
         menu.items[selected].values
           ? indexStates[selected]
           : menu.items[selected].checked
-          ? checkedStates[selected]
-          : null,
+            ? checkedStates[selected]
+            : null,
         menu.items[selected].values ? 'isScroll' : menu.items[selected].checked ? 'isCheck' : null,
       ]).catch();
     }, 100);
@@ -181,7 +206,6 @@ const ListMenu: React.FC = () => {
     if (!data.startItemIndex || data.startItemIndex < 0) data.startItemIndex = 0;
     else if (data.startItemIndex >= data.items.length) data.startItemIndex = data.items.length - 1;
     setSelected(data.startItemIndex);
-    if (!data.position) data.position = 'top-left';
     listRefs.current = [];
     setMenu(data);
     setVisible(true);
@@ -203,13 +227,13 @@ const ListMenu: React.FC = () => {
           label={
             isValuesObject(menu.items[selected].values)
               ? // @ts-ignore
-                menu.items[selected].values[indexStates[selected]].description
+              menu.items[selected].values[indexStates[selected]].description
               : menu.items[selected].description
           }
           opened={
             isValuesObject(menu.items[selected].values)
               ? // @ts-ignore
-                !!menu.items[selected].values[indexStates[selected]].description
+              !!menu.items[selected].values[indexStates[selected]].description
               : !!menu.items[selected].description
           }
           transitionDuration={0}
@@ -217,6 +241,7 @@ const ListMenu: React.FC = () => {
         >
           <Box className={classes.container}>
             <Header title={menu.title} />
+            <Divider />
             <Box className={classes.buttonsWrapper} onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => moveMenu(e)}>
               <FocusTrap active={visible}>
                 <Stack spacing={8} p={8} sx={{ overflowY: 'scroll' }}>

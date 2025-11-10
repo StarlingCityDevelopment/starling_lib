@@ -33,6 +33,14 @@ const ColorField: React.FC<Props> = (props) => {
       format={props.row.format}
       withAsterisk={props.row.required}
       icon={props.row.icon && <LibIcon icon={props.row.icon} fixedWidth />}
+      styles={{
+        label: {
+          color: 'white',
+        },
+        input: {
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        }
+      }}
     />
   );
 };

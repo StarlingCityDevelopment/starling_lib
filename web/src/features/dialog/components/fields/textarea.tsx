@@ -26,6 +26,15 @@ const TextareaField: React.FC<Props> = (props) => {
       maxRows={props.row.max}
       minLength={props.row.minLength}
       maxLength={props.row.maxLength}
+      styles={{
+        label: {
+          color: 'white',
+        },
+        input: {
+          color: 'white',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        }
+      }}
     />
   );
 };

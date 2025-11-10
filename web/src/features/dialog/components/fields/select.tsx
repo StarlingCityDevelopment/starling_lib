@@ -34,6 +34,26 @@ const SelectField: React.FC<Props> = (props) => {
           clearable={props.row.clearable}
           searchable={props.row.searchable}
           icon={props.row.icon && <LibIcon icon={props.row.icon} fixedWidth />}
+          styles={{
+            icon: {
+              color: 'white',
+            },
+            label: {
+              color: 'white',
+            },
+            dropdown: {
+              color: 'white',
+              backgroundColor: 'rgba(0, 0, 0, 0.90)',
+              border: 'none',
+            },
+            wrapper: {
+              color: 'white',
+            },
+            input: {
+              color: 'white',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            }
+          }}
         />
       ) : (
         <>
@@ -53,6 +73,22 @@ const SelectField: React.FC<Props> = (props) => {
               searchable={props.row.searchable}
               maxSelectedValues={props.row.maxSelectedValues}
               icon={props.row.icon && <LibIcon icon={props.row.icon} fixedWidth />}
+              styles={{
+                icon: {
+                  color: 'white',
+                },
+                label: {
+                  color: 'white',
+                },
+                dropdown: {
+                  color: 'white',
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                },
+                input: {
+                  color: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                }
+              }}
             />
           )}
         </>

@@ -4,19 +4,32 @@ import ReactMarkdown from 'react-markdown';
 import { Box, Center, createStyles, Group, keyframes, RingProgress, Stack, Text, ThemeIcon } from '@mantine/core';
 import React, { useState } from 'react';
 import tinycolor from 'tinycolor2';
-import type { NotificationProps } from '../../typings';
+import type { ContainerPosition, NotificationProps } from '../../typings';
 import MarkdownComponents from '../../config/MarkdownComponents';
 import LibIcon from '../../components/LibIcon';
 
 const useStyles = createStyles((theme) => ({
   container: {
-    width: 300,
+    width: '100%',
+    animation: `${slideIn} 300ms cubic-bezier(0.2, 0.8, 0.2, 1)`,
+    position: 'relative',
     height: 'fit-content',
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
     color: theme.colors.dark[0],
     padding: 14,
-    borderRadius: theme.radius.md,
+    paddingLeft: 20,
+    borderTopRightRadius: theme.radius.md,
+    borderBottomRightRadius: theme.radius.md,
     boxShadow: theme.shadows.sm,
+    ":before": {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: 4,
+      backgroundColor: 'red',
+    },
   },
   title: {
     fontWeight: 500,
@@ -34,49 +47,26 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const createAnimation = (from: string, to: string, visible: boolean) =>
-  keyframes({
-    from: {
-      opacity: visible ? 0 : 1,
-      transform: `translate${from}`,
-    },
-    to: {
-      opacity: visible ? 1 : 0,
-      transform: `translate${to}`,
-    },
-  });
-
-const getAnimation = (visible: boolean, position: string) => {
-  const animationOptions = visible ? '0.2s ease-out forwards' : '0.4s ease-in forwards';
-  let animation: { from: string; to: string };
-
-  if (visible) {
-    animation = position.includes('bottom') ? { from: 'Y(30px)', to: 'Y(0px)' } : { from: 'Y(-30px)', to: 'Y(0px)' };
-  } else {
-    if (position.includes('right')) {
-      animation = { from: 'X(0px)', to: 'X(100%)' };
-    } else if (position.includes('left')) {
-      animation = { from: 'X(0px)', to: 'X(-100%)' };
-    } else if (position === 'top-center') {
-      animation = { from: 'Y(0px)', to: 'Y(-100%)' };
-    } else if (position === 'bottom-center') {
-      animation = { from: 'Y(0px)', to: 'Y(100%)' };
-    } else {
-      animation = { from: 'X(0px)', to: 'X(100%)' };
-    }
-  }
-
-  return `${createAnimation(animation.from, animation.to, visible)} ${animationOptions}`;
-};
-
 const durationCircle = keyframes({
   '0%': { strokeDasharray: `0, ${15.1 * 2 * Math.PI}` },
   '100%': { strokeDasharray: `${15.1 * 2 * Math.PI}, 0` },
 });
 
+const slideIn = keyframes({
+  '0%': { transform: 'translateX(-100%)', opacity: 0 },
+  '100%': { transform: 'translateX(0)', opacity: 1 },
+});
+
 const Notifications: React.FC = () => {
   const { classes } = useStyles();
+
   const [toastKey, setToastKey] = useState(0);
+  const [containerPosition, setContainerPosition] = useState<ContainerPosition>({
+    top: 'calc(80.875747480945% - 32.5%)',
+    left: '1.5000015497208%',
+    width: '359.99999731779px',
+    height: '30%',
+  });
 
   useNuiEvent<NotificationProps>('notify', (data) => {
     if (!data.title && !data.description) return;
@@ -85,21 +75,9 @@ const Notifications: React.FC = () => {
     const duration = data.duration || 3000;
 
     let iconColor: string;
-    let position = data.position || 'top-right';
-
     data.showDuration = data.showDuration !== undefined ? data.showDuration : true;
 
     if (toastId) setToastKey((prevKey) => prevKey + 1);
-
-    // Backwards compat with old notifications
-    switch (position) {
-      case 'top':
-        position = 'top-center';
-        break;
-      case 'bottom':
-        position = 'bottom-center';
-        break;
-    }
 
     if (!data.icon) {
       switch (data.type) {
@@ -138,12 +116,8 @@ const Notifications: React.FC = () => {
     }
 
     toast.custom(
-      (t) => (
+      () => (
         <Box
-          sx={{
-            animation: getAnimation(t.visible, position),
-            ...data.style,
-          }}
           className={`${classes.container}`}
         >
           <Group noWrap spacing={12}>
@@ -208,12 +182,32 @@ const Notifications: React.FC = () => {
       {
         id: toastId,
         duration: duration,
-        position: position,
+        position: 'bottom-center',
       }
     );
   });
 
-  return <Toaster />;
+  useNuiEvent('setNotifyposition', (data: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  }) => {
+    setContainerPosition({
+      top: `calc(${data.top}% - 32.5%)`,
+      left: `${data.left}%`,
+      width: `${data.width}px`,
+      height: `30%`,
+    });
+  });
+
+  return <Toaster containerStyle={{
+    position: 'absolute',
+    top: containerPosition.top,
+    left: containerPosition.left,
+    width: containerPosition.width,
+    height: containerPosition.height,
+  }} />;
 };
 
 export default Notifications;

@@ -1,4 +1,3 @@
-import { ToastPosition } from 'react-hot-toast';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Sx } from '@mantine/core';
 import { IconAnimation } from '../components/LibIcon';
@@ -12,8 +11,20 @@ export interface NotificationProps {
   icon?: IconProp;
   iconColor?: string;
   iconAnimation?: IconAnimation;
-  position?: ToastPosition | 'top' | 'bottom';
+  position?: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  };
   id?: number | string;
   type?: string;
   alignIcon?: 'top' | 'center';
+}
+
+export interface ContainerPosition {
+  top: string;
+  left: string;
+  width: string;
+  height: string;
 }

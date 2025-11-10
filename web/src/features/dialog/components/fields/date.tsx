@@ -37,6 +37,23 @@ const DateField: React.FC<Props> = (props) => {
           icon={props.row.icon && <LibIcon fixedWidth icon={props.row.icon} />}
           minDate={props.row.min ? new Date(props.row.min) : undefined}
           maxDate={props.row.max ? new Date(props.row.max) : undefined}
+          styles={{
+            wrapper: {
+              color: 'white',
+            },
+            label: {
+              color: 'white',
+            },
+            icon: {
+              color: 'white',
+            },
+            rightSection: {
+              color: 'white',
+            },
+            input: {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            }
+          }}
         />
       )}
       {props.row.type === 'date-range' && (
@@ -64,6 +81,23 @@ const DateField: React.FC<Props> = (props) => {
           icon={props.row.icon && <LibIcon fixedWidth icon={props.row.icon} />}
           minDate={props.row.min ? new Date(props.row.min) : undefined}
           maxDate={props.row.max ? new Date(props.row.max) : undefined}
+          styles={{
+            wrapper: {
+              color: 'white',
+            },
+            label: {
+              color: 'white',
+            },
+            icon: {
+              color: 'white',
+            },
+            rightSection: {
+              color: 'white',
+            },
+            input: {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            }
+          }}
         />
       )}
     </>

@@ -8,28 +8,39 @@ import type { TextUiPosition, TextUiProps } from '../../typings';
 import MarkdownComponents from '../../config/MarkdownComponents';
 import LibIcon from '../../components/LibIcon';
 
-const useStyles = createStyles((theme, params: { position?: TextUiPosition }) => ({
+const useStyles = createStyles((_, params: { position?: TextUiPosition }) => ({
   wrapper: {
     height: '100%',
     width: '100%',
     position: 'absolute',
     display: 'flex',
-    alignItems: 
-      params.position === 'top-center' ? 'baseline' :
-      params.position === 'bottom-center' ? 'flex-end' : 'center',
-    justifyContent: 
-      params.position === 'right-center' ? 'flex-end' :
-      params.position === 'left-center' ? 'flex-start' : 'center',
+    alignItems:
+      params?.position === 'top-center' ? 'flex-start' :
+      params?.position === 'bottom-center' ? 'flex-end' : 'center',
+    justifyContent:
+      params?.position === 'right-center' ? 'flex-end' :
+      params?.position === 'left-center' ? 'flex-start' : 'center',
+    pointerEvents: 'none',
+    padding: 12,
+    boxSizing: 'border-box',
   },
   container: {
     fontSize: 16,
-    padding: 12,
+    padding: '10px 14px',
     margin: 8,
-    backgroundColor: theme.colors.dark[6],
-    color: theme.colors.dark[0],
-    fontFamily: 'Roboto',
-    borderRadius: theme.radius.sm,
-    boxShadow: theme.shadows.sm,
+    backgroundColor: 'rgba(0, 0, 0, 0.72)',
+    color: '#ffffff',
+    borderRadius: 8,
+    boxShadow: '0 6px 18px rgba(255, 0, 0, 0.2)',
+    maxWidth: 'min(70vw, 720px)',
+    minWidth: 120,
+    lineHeight: 1.4,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    pointerEvents: 'auto',
+    backdropFilter: 'saturate(120%) blur(6px)',
+    WebkitBackdropFilter: 'saturate(120%) blur(6px)',
   },
 }));
 

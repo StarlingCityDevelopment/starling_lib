@@ -34,6 +34,11 @@ code {
   }
 }
 
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 ::-webkit-scrollbar {
   background-color: transparent;
   padding: 0;

@@ -62,9 +62,10 @@ const Notifications: React.FC = () => {
 
   const [toastKey, setToastKey] = useState(0);
   const [containerPosition, setContainerPosition] = useState<ContainerPosition>({
-    top: 'calc(80.875747480945% - 32.5%)',
-    left: '1.5000015497208%',
-    width: '359.99999731779px',
+    top: 80.87,
+    left: 1.5,
+    width: 360,
+    height: 270,
   });
 
   useNuiEvent<NotificationProps>('notify', (data) => {
@@ -193,18 +194,19 @@ const Notifications: React.FC = () => {
     height: number;
   }) => {
     setContainerPosition({
-      top: `${data.top}%`,
-      left: `${data.left}%`,
-      width: `${data.width}px`,
+      top: data.top,
+      left: data.left,
+      width: data.width,
+      height: data.height,
     });
   });
 
   return <Toaster containerStyle={{
     position: 'absolute',
-    top: containerPosition.top,
-    left: containerPosition.left,
+    top: 0,
+    left: `${containerPosition.left}%`,
     width: containerPosition.width,
-    height: '50%',
+    height: `${containerPosition.top}%`,
   }} />;
 };
 

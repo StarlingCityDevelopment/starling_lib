@@ -1,22 +1,20 @@
 local GetAspectRatio = GetAspectRatio
-local GetActualScreenResolution = GetActualScreenResolution
+local GetActiveScreenResolution = GetActiveScreenResolution
 local GetScriptGfxPosition = GetScriptGfxPosition
 local SetScriptGfxAlign = SetScriptGfxAlign
 local ResetScriptGfxAlign = ResetScriptGfxAlign
 
-local screenWidth, screenHeight = GetActualScreenResolution()
-local currentMapShape = exports.sc_hud:CurrentMapShape()
+local screenWidth, screenHeight = GetActiveScreenResolution()
 
 local function getMinimapDimensions()
     SetScriptGfxAlign(string.byte("L"), string.byte("B"))
 
-    local currentScreenWidth, currentScreenHeight = GetActualScreenResolution()
+    local currentScreenWidth, currentScreenHeight = GetActiveScreenResolution()
     local aspectRatio = GetAspectRatio(false)
     local widthScale = 1 / currentScreenWidth
     local heightScale = 1 / currentScreenHeight
 
-    local mapShape = currentMapShape
-    if mapShape == "rectangle" then
+    if exports.sc_hud:CurrentMapShape() == "rectangle" then
         local posX, posY = GetScriptGfxPosition(0.0, -0.237)
         if currentScreenWidth ~= screenWidth or currentScreenHeight ~= screenHeight then
             screenWidth = currentScreenWidth
@@ -26,7 +24,7 @@ local function getMinimapDimensions()
         ResetScriptGfxAlign()
 
         local leftPct = posX * 100
-        local topPct = posY * 100 - (cache.vehicle and 55 or 30)
+        local topPct = posY * 100 - (cache.vehicle and 5 or -20)
 
         local dimensions = {
             width = widthScale * (currentScreenWidth / (3.48 * aspectRatio)),
@@ -49,7 +47,7 @@ local function getMinimapDimensions()
     end
 
     local leftPct = posX * 100
-        local topPct = posY * 100 - (cache.vehicle and 55 or 30)
+    local topPct = posY * 100 - (cache.vehicle and 5 or -20)
 
     local dimensions = {
         width = widthScale * (currentScreenWidth / (3.9 * aspectRatio)),
@@ -68,18 +66,22 @@ end
 
 CreateThread(function()
     while true do
-        local minimap = getMinimapDimensions()
+        if LocalPlayer.state['isLoggedIn'] then
+            local minimap = getMinimapDimensions()
 
-        SendNUIMessage({
-            action = 'setNotifyPosition',
-            data = {
-                top = minimap.interfaceDimensions.top,
-                left = minimap.interfaceDimensions.left,
-                width = minimap.interfaceDimensions.width,
-                height = minimap.interfaceDimensions.height
-            }
-        })
+            SendNUIMessage({
+                action = 'setNotifyPosition',
+                data = {
+                    top = minimap.interfaceDimensions.top,
+                    left = minimap.interfaceDimensions.left,
+                    width = minimap.interfaceDimensions.width,
+                    height = minimap.interfaceDimensions.height
+                }
+            })
 
-        Wait(1000)
+            Wait(1000)
+        else
+            Wait(5000)
+        end
     end
 end)

@@ -22,7 +22,6 @@ const useStyles = createStyles(() => ({
     alignItems: 'flex-end',
     gap: 32,
     background: 'linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%)',
-    backdropFilter: 'blur(2px)',
     color: '#fff',
     pointerEvents: 'none',
   },

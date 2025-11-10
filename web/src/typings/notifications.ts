@@ -23,7 +23,8 @@ export interface NotificationProps {
 }
 
 export interface ContainerPosition {
-  top: string;
-  left: string;
-  width: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }

@@ -31,7 +31,6 @@ const useStyles = createStyles((_, params: { position?: TextUiPosition }) => ({
     backgroundColor: 'rgba(0, 0, 0, 0.72)',
     color: '#ffffff',
     borderRadius: 8,
-    boxShadow: '0 6px 18px rgba(255, 0, 0, 0.2)',
     maxWidth: 'min(70vw, 720px)',
     minWidth: 120,
     lineHeight: 1.4,
@@ -39,8 +38,6 @@ const useStyles = createStyles((_, params: { position?: TextUiPosition }) => ({
     alignItems: 'center',
     gap: 12,
     pointerEvents: 'auto',
-    backdropFilter: 'saturate(120%) blur(6px)',
-    WebkitBackdropFilter: 'saturate(120%) blur(6px)',
   },
 }));
 

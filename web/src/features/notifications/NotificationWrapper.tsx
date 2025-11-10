@@ -65,7 +65,6 @@ const Notifications: React.FC = () => {
     top: 'calc(80.875747480945% - 32.5%)',
     left: '1.5000015497208%',
     width: '359.99999731779px',
-    height: '30%',
   });
 
   useNuiEvent<NotificationProps>('notify', (data) => {
@@ -187,17 +186,16 @@ const Notifications: React.FC = () => {
     );
   });
 
-  useNuiEvent('setNotifyposition', (data: {
+  useNuiEvent('setNotifyPosition', (data: {
     top: number;
     left: number;
     width: number;
     height: number;
   }) => {
     setContainerPosition({
-      top: `calc(${data.top}% - 32.5%)`,
+      top: `${data.top}%`,
       left: `${data.left}%`,
       width: `${data.width}px`,
-      height: `30%`,
     });
   });
 
@@ -206,7 +204,7 @@ const Notifications: React.FC = () => {
     top: containerPosition.top,
     left: containerPosition.left,
     width: containerPosition.width,
-    height: containerPosition.height,
+    height: '50%',
   }} />;
 };
 

@@ -26,7 +26,7 @@ local function getMinimapDimensions()
         ResetScriptGfxAlign()
 
         local leftPct = posX * 100
-        local topPct = posY * 100 - (cache.vehicle and 55 or -10)
+        local topPct = posY * 100 - (cache.vehicle and 55 or 30)
 
         local dimensions = {
             width = widthScale * (currentScreenWidth / (3.48 * aspectRatio)),
@@ -49,7 +49,7 @@ local function getMinimapDimensions()
     end
 
     local leftPct = posX * 100
-    local topPct = posY * 100 - (cache.vehicle and 55 or -10)
+        local topPct = posY * 100 - (cache.vehicle and 55 or 30)
 
     local dimensions = {
         width = widthScale * (currentScreenWidth / (3.9 * aspectRatio)),

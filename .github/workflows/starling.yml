@@ -32,14 +32,14 @@ jobs:
 
       - name: Bundle files
         run: |
-          mkdir -p ./temp/ox_lib
-          mkdir -p ./temp/ox_lib/web/
-          mkdir -p ./temp/ox_lib/locales/
-          cp ./{fxmanifest.lua,init.lua} ./temp/ox_lib
-          cp ./{locales/en.json,locales/fr.json} ./temp/ox_lib/locales
-          cp -r ./{imports,resource} ./temp/ox_lib
-          cp -r ./web/build ./temp/ox_lib/web/
-          cd ./temp && zip -r ../ox_lib.zip ./ox_lib
+          mkdir -p ./temp/starling_lib
+          mkdir -p ./temp/starling_lib/web/
+          mkdir -p ./temp/starling_lib/locales/
+          cp ./{fxmanifest.lua,init.lua} ./temp/starling_lib
+          cp ./{locales/en.json,locales/fr.json} ./temp/starling_lib/locales
+          cp -r ./{imports,resource} ./temp/starling_lib
+          cp -r ./web/build ./temp/starling_lib/web/
+          cd ./temp && zip -r ../starling_lib.zip ./starling_lib
 
       - name: Create Release
         uses: 'marvinpinto/action-automatic-releases@v1.2.1'
@@ -48,7 +48,7 @@ jobs:
           repo_token: '${{ secrets.GITHUB_TOKEN }}'
           title: 'Ready to download'
           prerelease: true
-          files: ox_lib.zip
+          files: starling_lib.zip
 
         env:
           CI: false

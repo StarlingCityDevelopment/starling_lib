@@ -34,7 +34,6 @@ const useStyles = createStyles((theme, params: { position: 'middle' | 'bottom'; 
   },
   value: {
     textAlign: 'center',
-    fontFamily: 'Quicksand',
     textShadow: theme.shadows.sm,
     color: theme.colors.gray[3],
   },

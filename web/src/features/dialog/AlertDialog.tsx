@@ -71,8 +71,7 @@ const AlertDialog: React.FC = () => {
           inner: {
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.25)',
-            backdropFilter: 'blur(2px)',
+            background: 'radial-gradient(circle,rgba(0, 0, 0, 0.45) 25%, rgba(0, 0, 0, 0) 100%)',
             border: 'none',
             boxShadow: 'none',
           },

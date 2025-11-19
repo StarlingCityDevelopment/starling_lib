@@ -13,6 +13,7 @@
     "@mantine/core": "^5.10.5",
     "@mantine/dates": "^5.10.5",
     "@mantine/hooks": "^5.10.5",
+    "@tanstack/react-virtual": "^3.13.12",
     "@vitejs/plugin-react": "^4.7.0",
     "dayjs": "^1.11.19",
     "focus-trap-react": "^9.0.2",

@@ -1,12 +1,13 @@
 import { useNuiEvent } from '../../../hooks/useNuiEvent';
-import { Box, Button, createStyles, Divider, Flex, Stack, Text } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { Box, Button, createStyles, Divider, Flex, Input, Text } from '@mantine/core';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { ContextMenuProps } from '../../../typings';
 import ContextButton from './components/ContextButton';
 import { fetchNui } from '../../../utils/fetchNui';
 import ReactMarkdown from 'react-markdown';
 import ScaleFade from '../../../transitions/ScaleFade';
 import MarkdownComponents from '../../../config/MarkdownComponents';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 const openMenu = (id: string | undefined) => {
   fetchNui<ContextMenuProps>('openContext', { id: id, back: true });
@@ -115,15 +116,28 @@ const useStyles = createStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  searchInput: {
+    marginBottom: '1rem',
+    minHeight: 48,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    '& input::placeholder': {
+      color: 'rgba(255,255,255,0.92)',
+      fontSize: 14,
+    },
+  },
 }));
 
 const ContextMenu: React.FC = () => {
   const { classes } = useStyles();
   const [visible, setVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const [contextMenu, setContextMenu] = useState<ContextMenuProps>({
     title: '',
     options: { '': { description: '', metadata: [] } },
   });
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const closeContext = () => {
     if (contextMenu.canClose === false) return;
@@ -151,7 +165,29 @@ const ContextMenu: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
     setContextMenu(data);
+    setSearchValue(''); // Réinitialiser la recherche lors de l'ouverture d'un nouveau menu
     setVisible(true);
+  });
+
+  // Filtrage optimisé des options
+  const filteredOptions = useMemo(() => {
+    if (!searchValue.trim()) {
+      return Object.entries(contextMenu.options);
+    }
+
+    const searchLower = searchValue.toLowerCase().trim();
+    return Object.entries(contextMenu.options).filter(([_, option]) => {
+      const titleMatch = option.title?.toLowerCase().includes(searchLower) || false;
+      const descriptionMatch = option.description?.toLowerCase().includes(searchLower) || false;
+      return titleMatch || descriptionMatch;
+    });
+  }, [contextMenu.options, searchValue]);
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredOptions.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 60,
+    overscan: 5,
   });
 
   return visible ? (
@@ -180,12 +216,70 @@ const ContextMenu: React.FC = () => {
 
             <Divider />
 
-            <Box className={classes.buttonsContainer}>
-              <Stack className={classes.buttonsFlexWrapper}>
-                {Object.entries(contextMenu.options).map((option, index) => (
-                  <ContextButton option={option} key={`context-item-${index}`} />
-                ))}
-              </Stack>
+            <Input 
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.currentTarget.value)}
+              styles={{
+                icon: {
+                  color: 'white',
+                },
+                rightSection: {
+                  color: 'white',
+                },
+                wrapper: {
+                  color: 'white',
+                },
+                input: {
+                  color: 'white',
+                  backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                  border: 'none',
+                  borderRadius: 8,
+                  height: '3rem',
+                  fontSize: '1rem',
+                  '&::placeholder': {
+                    color: 'rgba(255, 255, 255, 0.85)',
+                  }
+                }
+              }} 
+              placeholder="Rechercher..." 
+            />
+
+            <Divider />
+
+            <Box ref={parentRef} className={classes.buttonsContainer}>
+              <div
+                style={{
+                  height: `${rowVirtualizer.getTotalSize()}px`,
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+                  const option = filteredOptions[virtualItem.index];
+                  return (
+                    <div
+                      key={virtualItem.key}
+                      data-index={virtualItem.index}
+                      ref={rowVirtualizer.measureElement}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        transform: `translateY(${virtualItem.start}px)`,
+                        paddingBottom: '6px',
+                      }}
+                    >
+                      <ContextButton option={option} />
+                    </div>
+                  );
+                })}
+              </div>
+              {filteredOptions.length === 0 && (
+                <Text style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '1rem' }}>
+                  Aucun résultat trouvé
+                </Text>
+              )}
             </Box>
 
             {contextMenu.menu && (

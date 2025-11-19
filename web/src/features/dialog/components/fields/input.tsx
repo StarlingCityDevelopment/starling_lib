@@ -37,9 +37,11 @@ const InputField: React.FC<Props> = (props) => {
             icon: {
               color: 'white',
             },
+
             label: {
               color: 'white',
             },
+            
             input: {
               color: 'white',
               backgroundColor: 'rgba(255, 255, 255, 0.05)',

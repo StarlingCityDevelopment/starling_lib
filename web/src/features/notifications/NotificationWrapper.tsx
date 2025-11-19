@@ -32,17 +32,18 @@ const useStyles = createStyles((theme) => ({
     },
   },
   title: {
-    fontWeight: 500,
+    fontWeight: 600,
     lineHeight: 'normal',
+    color: 'rgba(255, 255, 255, 1.0)',
   },
   description: {
     fontSize: 12,
-    color: theme.colors.dark[2],
+    color: 'rgba(255, 255, 255, 0.85)',
     lineHeight: 'normal',
   },
   descriptionOnly: {
     fontSize: 14,
-    color: theme.colors.dark[2],
+    color: 'rgba(255, 255, 255, 1.0)',
     lineHeight: 'normal',
   },
 }));

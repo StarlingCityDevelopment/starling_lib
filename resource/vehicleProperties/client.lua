@@ -94,6 +94,8 @@ if cache.game == 'redm' then return end
 ---@field tyres? table<number | string, 1 | 2>
 ---@field bulletProofTyres? boolean
 ---@field driftTyres? boolean
+---@field customXenon? number[]
+---@field deformation? any
 
 ---@deprecated
 ---Not recommended. Entity owners can change rapidly and sporadically.
@@ -145,16 +147,25 @@ function lib.getVehicleProperties(vehicle)
         local paintType2 = GetVehicleModColor_2(vehicle)
 
         if GetIsVehiclePrimaryColourCustom(vehicle) then
-            colorPrimary = { GetVehicleCustomPrimaryColour(vehicle) }
+            local r, g, b = GetVehicleCustomPrimaryColour(vehicle)
+            colorPrimary = { r, g, b }
         end
 
         if GetIsVehicleSecondaryColourCustom(vehicle) then
-            colorSecondary = { GetVehicleCustomSecondaryColour(vehicle) }
+            local r, g, b = GetVehicleCustomSecondaryColour(vehicle)
+            colorSecondary = { r, g, b }
+        end
+
+        local customXenon = nil
+        local hasCustomXenon, customXenonColorR, customXenonColorG, customXenonColorB = GetVehicleXenonLightsCustomColor(vehicle)
+
+        if hasCustomXenon then
+            customXenon = { customXenonColorR, customXenonColorG, customXenonColorB }
         end
 
         local extras = {}
 
-        for i = 1, 15 do
+        for i = 0, 20 do
             if DoesExtraExist(vehicle, i) then
                 extras[i] = IsVehicleExtraTurnedOn(vehicle, i) and 0 or 1
             end
@@ -196,6 +207,12 @@ function lib.getVehicleProperties(vehicle)
 
         for i = 0, 3 do
             neons[i + 1] = IsVehicleNeonLightEnabled(vehicle, i)
+        end
+
+        local deformation = nil
+
+        if GetResourceState('VehicleDeformation') == 'started' then
+            deformation = exports['VehicleDeformation']:GetVehicleDeformation(vehicle)
         end
 
         return {
@@ -284,6 +301,8 @@ function lib.getVehicleProperties(vehicle)
             tyres = damage.tyres,
             bulletProofTyres = GetVehicleTyresCanBurst(vehicle),
             driftTyres = gameBuild >= 2372 and GetDriftTyresEnabled(vehicle),
+            customXenon = customXenon,
+            deformation = deformation,
             -- no setters?
             -- leftHeadlight = GetIsLeftVehicleHeadlightDamaged(vehicle),
             -- rightHeadlight = GetIsRightVehicleHeadlightDamaged(vehicle),
@@ -642,6 +661,16 @@ function lib.setVehicleProperties(vehicle, props, fixVehicle)
 
     if props.bulletProofTyres ~= nil then
         SetVehicleTyresCanBurst(vehicle, props.bulletProofTyres)
+    end
+
+    if props.customXenon then
+        SetVehicleXenonLightsCustomColor(vehicle, props.customXenon[1], props.customXenon[2], props.customXenon[3])
+    end
+
+    if GetResourceState('VehicleDeformation') == 'started' then
+        if props.deformation then
+            exports['VehicleDeformation']:SetVehicleDeformation(vehicle, props.deformation)
+        end
     end
 
     if gameBuild >= 2372 and props.driftTyres then
